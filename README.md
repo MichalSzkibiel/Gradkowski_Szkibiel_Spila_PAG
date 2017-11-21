@@ -5,7 +5,7 @@ Implementacja algorytmu A*
   
   Bieżące zadania:
   
-       1. Utworzenie struktury grafu z Feature Classy przedstawiającej drogi - wykonane / Michał Szkibiel
+       1. Utworzenie struktury grafu z Feature Classy przedstawiającej drogi/ Michał Szkibiel - do ulepszenia
        
        2. Uzupełnienie parametrów i uzupełnienie ich w widoku grafu / Karol Śpila
        
