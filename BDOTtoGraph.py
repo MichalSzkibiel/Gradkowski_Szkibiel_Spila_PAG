@@ -3,18 +3,14 @@ import math
 
 def isClose(first, second, maxDiff):
     #Funkcja sprawdzajaca czy dwa elementy (first, second) roznia sie najwyzej o maxDiff
-    if abs(first - second) < maxDiff:
-        return True
-    return False
+    return abs(first - second) < maxDiff
 
 def isClose2(first, second, maxDiff):
     #Funkcja sprawdzajaca czy dwa dwumiarowe punkty (first, second) sa od siebie odlegle najwyzej o maxDiff
     el0 = first[0] - second[0]
     el1 = first[1] - second[1]
     sqrt = math.sqrt(el0**2 + el1**2)
-    if sqrt < maxDiff:
-        return True
-    return False
+    return sqrt < maxDiff
 
 class Graph:
     #Klasa przechowujaca siec drog w formie grafu
