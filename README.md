@@ -1,4 +1,4 @@
-# Szkibiel_Spila_PAG
+# Gradkowski_Szkibiel_Spila_PAG
 Implementacja algorytmu A*
 
   Autorzy: Adam Gradkowski, Michał Szkibiel, Karol Śpila
