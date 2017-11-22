@@ -87,7 +87,7 @@ class Graph:
                     first = midpoint+1
         return n
 
-    def insert_edge(self, id, begin, end):
+    def insert_edge(self, id, begin, end, length, avgSpeed, direction):
 	    #Funkcja sluzaca do wstawiania nowych polaczen
         n = len(self.pointCoords)
 		#Sprawdzenie, czy poczatek zostal juz wprowadzony
@@ -102,7 +102,7 @@ class Graph:
             self = self.insert_point(end)
             n += 1
 	    #Wstawienie do tabeli polaczen
-        self.edges.append([id, begIdx, endIdx])
+        self.edges.append([id, begIdx, endIdx, Length, AVGspeed, Direct])
         return self
 		
     def export(self, file):
@@ -118,7 +118,7 @@ class Graph:
         count = float(arcpy.GetCount_management(lines).getOutput(0))
         i = 0.0
 		#Wybor argumentow istotnych dla problemu
-        with arcpy.da.SearchCursor(lines, ["SHAPE@", "skdr_l1"]) as sc:
+        with arcpy.da.SearchCursor(lines, ["SHAPE@", "skdr_l", "SHAPE@LENGTH", "AVGSPEED", "DIRECTION"]) as sc:
             for line in sc:
                 i += 1.0
 				#Pobor argumentow
@@ -128,6 +128,9 @@ class Graph:
 				#Inicjalizacja
                 begin = [0,0]
                 end = [1,1]
+		length=[2,2]
+		avgSpeed=[3,3]
+		direction = [4,4]
 				
 				#Znalezienie pierwszego i ostatniego punktu geometrii
                 for part in geom:
@@ -143,6 +146,12 @@ class Graph:
 roads = arcpy.GetParameterAsText(0)
 #Plik tekstowy do zapisu struktury grafu
 file = arcpy.GetParameterAsText(1)
+#Kolumna atrybutow z dlugoscia odcinkow
+length = arcpy.GetParameterAsText(2)
+#Kolumna atrybutow ze srednia predkoscia
+avgSpeed = arcpy.GetParameterAsText(3)
+#Kolumna atrybutow z kierunkami jezdni
+direction = arcpy.GetParameterAsText(4)
 #Stworzenie grafu
 g = Graph(roads)
 #Zapisanie grafu do pliku tekstowego
