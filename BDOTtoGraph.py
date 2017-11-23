@@ -87,7 +87,7 @@ class Graph:
                     first = midpoint+1
         return n
 
-    def insert_edge(self, id, begin, end, length, avgSpeed, direction):
+    def insert_edge(self, id, begin, end, length, avg_Speed, direction):
 	    #Funkcja sluzaca do wstawiania nowych polaczen
         n = len(self.pointCoords)
 		#Sprawdzenie, czy poczatek zostal juz wprowadzony
@@ -102,7 +102,7 @@ class Graph:
             self = self.insert_point(end)
             n += 1
 	    #Wstawienie do tabeli polaczen
-        self.edges.append([id, begIdx, endIdx, Length, AVGspeed, Direct])
+        self.edges.append([id, begIdx, endIdx, length, avg_Speed, direction])
         return self
 		
     def export(self, file):
@@ -111,48 +111,47 @@ class Graph:
         stream.write(str(self.pointCoords) + "\n")
         stream.write(str(self.edges))
         stream.close()
-    def __init__(self, lines):
+    def __init__(self, lines, id, avg_Speed, direction):
 	    #Konstruktor grafu, ktorego parametrem jest warstwa "OT_SKDR_L" z BDOTu ze wzbogaconymi atrybutami w formie FeatureClassy
         self.pointCoords = []
         self.edges = []
         count = float(arcpy.GetCount_management(lines).getOutput(0))
         i = 0.0
 		#Wybor argumentow istotnych dla problemu
-        with arcpy.da.SearchCursor(lines, ["SHAPE@", "skdr_l", "SHAPE@LENGTH", "AVGSPEED", "DIRECTION"]) as sc:
+        with arcpy.da.SearchCursor(lines, ["SHAPE@", id, "SHAPE@LENGTH", avg_Speed, direction]) as sc:
             for line in sc:
                 i += 1.0
 				#Pobor argumentow
                 geom = line[0]
                 id = line[1]
+		length = line[2]
+		avg_Speed = line[3]
+		direction = line[4]
 				
 				#Inicjalizacja
                 begin = [0,0]
-                end = [1,1]
-		length=[2,2]
-		avgSpeed=[3,3]
-		direction = [4,4]
-				
+                end = [1,1]	
 				#Znalezienie pierwszego i ostatniego punktu geometrii
                 for part in geom:
                     begin = [part[0].X, part[0].Y]
                     end = [part[len(part) - 1].X, part[len(part) - 1].Y]
 					
 				#Wstawienie nowego polaczenia
-                self = self.insert_edge(id, begin, end)
+                self = self.insert_edge(id, begin, end, length, avg_Speed, direction)
                 if i % 1000 == 0:
                     arcpy.AddMessage("Wpisano " + str(i/count) + "% drog")
 
 #FeatureClass z drogami			
 roads = arcpy.GetParameterAsText(0)
-#Plik tekstowy do zapisu struktury grafu
-file = arcpy.GetParameterAsText(1)
-#Kolumna atrybutow z dlugoscia odcinkow
-length = arcpy.GetParameterAsText(2)
+#Kolumna atrybutow z identyfikatorem
+id = arcpy.GetParameterAsText(1)
 #Kolumna atrybutow ze srednia predkoscia
-avgSpeed = arcpy.GetParameterAsText(3)
+avg_Speed = arcpy.GetParameterAsText(2)
 #Kolumna atrybutow z kierunkami jezdni
-direction = arcpy.GetParameterAsText(4)
+direction = arcpy.GetParameterAsText(3)
+#Plik tekstowy do zapisu struktury grafu
+file = arcpy.GetParameterAsText(4)
 #Stworzenie grafu
-g = Graph(roads)
+g = Graph(roads, id, avg_Speed, direction)
 #Zapisanie grafu do pliku tekstowego
 g.export(file)
