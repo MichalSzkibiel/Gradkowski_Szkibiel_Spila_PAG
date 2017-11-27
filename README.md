@@ -19,7 +19,13 @@ Implementacja algorytmu A*
   
       BDOTtoGraph.py - plik konwertujacy Feature Classę z drogami na graf, a następnie zapisujący strukturę grafu do pliku tekstowego
       
-      Skrzynka.zip - skompresowana skrzynka ArcGISa z narzędziem "roads to graph" uruchamiającym skrypt BDOTtoGraph.py. Do poprawnego                           działania potrzebne jest ustalenie ścieżki do położenia pliku
+      Skrzynka.zip - skompresowana skrzynka ArcGISa z narzędziami:
+      
+          "roads to graph" - uruchamia skrypt BDOTtoGraph.py. 
+      
+          "make path" - uruchamia skrypt FindPath.py
+      
+          Do poprawnego działania potrzebne jest ustalenie ścieżki do położenia pliku
       
       Jezdnie_WokolTorunia.zip- skompresowany Plik z Shapefile z gotowymi atrybutami o średniej prędkości w zależności od klasy dróg i materiału jej nawierzchni w przedostatniej kolumnie o nazwie sred_pred, oraz o kierunkowości zawartej w wartosciach 0-3, gdzie: 0- dwukierunkowość; 1- jednokierunkowość zgodna z orientacją; 2-jednokierunkowość przeciwna do orientacji; 3-ulice wyłączone z ruchu w ostatniej kolumnie "kierunk".
        
