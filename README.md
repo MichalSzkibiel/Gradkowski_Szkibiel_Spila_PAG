@@ -1,7 +1,7 @@
-# Gradkowski_Szkibiel_Spila_PAG
+# Szkibiel_Spila_PAG
 Implementacja algorytmu A*
 
-  Autorzy: Adam Gradkowski, Michał Szkibiel, Karol Śpila
+  Autorzy: Michał Szkibiel, Karol Śpila
   
   Bieżące zadania:
   
@@ -9,11 +9,13 @@ Implementacja algorytmu A*
        
        2. Uzupełnienie parametrów i uzupełnienie ich w widoku grafu / Karol Śpila- zrobione
        
-       3. Zamiana składowej pointCoords klasy Graph z uporządkowanej tablicy na tablicę asocjacyjną celem optymalizacji działania / Adam Gradkowski
+       3. Zamiana składowej pointCoords klasy Graph z uporządkowanej tablicy na tablicę asocjacyjną celem optymalizacji działania / Michał Szkibiel
        
        4. Implementacja algorytmu BFS z uwzględnieniem tego, że ma służyć do wyznaczania trasy pomiędzy dwoma punktami / Michał Szkibiel - zrobione
        
        5. Stworzenie funkcji tworzącej shapefile z podanej tablicy identyfikatorów dróg celem uzyskania shapefile'a z trasą / Karol Śpila
+       
+       6. Zamiana składowej edges na listę połączeń dla danego wierzchołka celem optymalizacji działania / Karol Śpila
        
   Pliki:
   
