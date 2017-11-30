@@ -31,7 +31,7 @@ Implementacja algorytmu A*
       
       Jezdnie_WokolTorunia.zip- skompresowany Plik z Shapefile z gotowymi atrybutami o średniej prędkości w zależności od klasy dróg i materiału jej nawierzchni w przedostatniej kolumnie o nazwie sred_pred, oraz o kierunkowości zawartej w wartosciach 0-3, gdzie: 0- dwukierunkowość; 1- jednokierunkowość zgodna z orientacją; 2-jednokierunkowość przeciwna do orientacji; 3-ulice wyłączone z ruchu w ostatniej kolumnie "kierunk".
        
-      wizualizacja.py- plik zawierający funkcję umożliwiającą wyświetlenie określonej trasy w ArcMapie. Funkcja zostanie jeszcze później dodana do skryptu FindPath.py
+      wizualizacja.py- plik zawierający funkcję umożliwiającą wyświetlenie określonej trasy w ArcMapie. Funkcja została dodana także do skryptu FindPath.py
       
       Graph.py - moduł zawierający implemenrtację klasy Graph, z której będą korzystały wszystkie moduły wykonywalne zawarte w projekcie. Żeby możliwe było uruchomienie modułów wykonywalnych z poziomu narzędzia skryptowego w ArcGISie. Ten plik powinien się znaleźć w folderze C:\Python27\ArcGIS10.5\Lib (Ewentualnie, jak python nie jest zainstalowany bezpośrednio na dysku C, to ...\Python27\ArcGIS10.5\Lib)
       
