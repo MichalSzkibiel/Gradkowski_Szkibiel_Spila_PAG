@@ -1,5 +1,10 @@
 from Graph import *
 import arcpy
+def wizualizacja (drogi, tab_layer,result):
+    arcpy.MakeFeatureLayer_management(drogi,tab_layer)
+    SelectLayerByAttribute_management(tab_layer,"NEW_SELECTION","FID IN (FID)")#FID znajduje się w tablicy "drogi"
+    arcpy.CopyFeatures_management(tab_layer,result)
+
 
 #FeatureClass z drogami			
 roads = arcpy.GetParameterAsText(0)
@@ -13,7 +18,11 @@ direction = arcpy.GetParameterAsText(3)
 targets = arcpy.GetParameterAsText(4)
 #Plik z wyjsciem
 file = arcpy.GetParameterAsText(5)
-
+#Okreslenie nazwy layera
+tab_layer = "trasa_lyr"    
+#Wywolanie we skrypcie find_path    
+#Zamiana w Shapefile
+result=wizualizacja(roads,tab_layer,file)
 #Utworzenie grafu
 g = Graph(roads, id, avg_Speed, direction)
 #Wyciagniecie punktow z klasy targets
