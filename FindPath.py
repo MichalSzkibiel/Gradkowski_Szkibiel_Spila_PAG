@@ -1,8 +1,11 @@
 from Graph import *
 import arcpy
 def wizualizacja (drogi, tab_layer,result):
+    tab_layer="tab_layer"#definicja pomocniczej wartstwy
+    strtablica=str(tablica)#konwersja do stringa
+    strtablica = "(" + strtablica[1:len(strtablica)-1]+")"
     arcpy.MakeFeatureLayer_management(drogi,tab_layer)
-    SelectLayerByAttribute_management(tab_layer,"NEW_SELECTION","FID IN (FID)")#FID znajduje się w tablicy "drogi"
+    SelectLayerByAttribute_management(tab_layer,"NEW_SELECTION","FID IN "FID IN " + strtablica)#FID znajduje się w tablicy "drogi" lista wartosci w formie SQL-a
     arcpy.CopyFeatures_management(tab_layer,result)
 
 
@@ -17,9 +20,7 @@ direction = arcpy.GetParameterAsText(3)
 #Punkty z poczatkiem i koncem
 targets = arcpy.GetParameterAsText(4)
 #Plik z wyjsciem
-file = arcpy.GetParameterAsText(5)
-#Okreslenie nazwy layera
-tab_layer = "trasa_lyr"    
+file = arcpy.GetParameterAsText(5)  
 #Wywolanie we skrypcie find_path    
 #Zamiana w Shapefile
 result=wizualizacja(roads,tab_layer,file)
@@ -36,6 +37,8 @@ end = g.binary_search(points[1], 100)
 arcpy.AddMessage(str(begin) + " " + str(end))
 #Wyznaczenie trasy
 path = g.make_path(begin, end)
+#Zamiana w Shapefile
+wizualizacja(roads,path,file)
 #Zapis do pliku
 stream = open(file, 'w')
 stream.write(str(path))
