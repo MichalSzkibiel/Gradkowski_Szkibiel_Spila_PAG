@@ -1,6 +1,7 @@
 import arcpy
 import math
 from Queue import Queue
+from Queue import *
 
 def isClose(first, second, maxDiff):
     #Funkcja sprawdzajaca czy dwa elementy (first, second) roznia sie najwyzej o maxDiff
@@ -136,6 +137,9 @@ class Graph:
 		length = line[2]
 		avg_Speed = line[3]
 		direction = line[4]
+                length = line[2]
+                avg_Speed = line[3]
+                direction = line[4]
 				
 				#Inicjalizacja
                 begin = [0,0]
