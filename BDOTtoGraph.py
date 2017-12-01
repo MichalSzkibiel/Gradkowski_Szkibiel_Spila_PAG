@@ -1,5 +1,6 @@
-import Graph
+from Graph import Graph
 import arcpy
+import math
 
 #FeatureClass z drogami			
 roads = arcpy.GetParameterAsText(0)

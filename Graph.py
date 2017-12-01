@@ -22,7 +22,7 @@ class Graph:
     def __init__(self):
 	    #Konstruktor domyslny
         self.pointCoords = []
-        self.edges = []
+        self.edges = [[[]]]
     def insert_point(self, point):
 	    #Funkcja wstawiajaca nowy punkt do tablicy
 		#Punkty sa posegregowane wedlug sumy wspolrzednych X i Y
@@ -103,7 +103,15 @@ class Graph:
             self = self.insert_point(end)
             n += 1
 	    #Wstawienie do tabeli polaczen
-        self.edges.append([id, begIdx, endIdx, length, avg_Speed, direction])
+	if begin >=len(self.edges):
+            self.edges.append([[end,id,length, avg_Speed, direction]])
+        else:
+            self.edges[begin].append([end,id,length, avg_Speed, direction])
+        if end >=len(self.edges):
+            self.edges.append([[begin,id,length, avg_Speed, direction]])
+        else:
+            self.edges[end].append([begin,id,length, avg_Speed, direction])
+        #self.edges.append([id, begIdx, endIdx, length, avg_Speed, direction])
         return self
 		
     def export(self, file):
@@ -115,7 +123,7 @@ class Graph:
     def __init__(self, lines, id, avg_Speed, direction):
 	    #Konstruktor grafu, ktorego parametrem jest warstwa "OT_SKDR_L" z BDOTu ze wzbogaconymi atrybutami w formie FeatureClassy
         self.pointCoords = []
-        self.edges = []
+        self.edges = [[[]]]
         count = float(arcpy.GetCount_management(lines).getOutput(0))
         i = 0.0
 		#Wybor argumentow istotnych dla problemu
@@ -177,33 +185,18 @@ class Graph:
         visited[begin] = True
         #Ustawienie pochodzenia punktu poczatkowego na samego siebie
         come_from[begin] = [0, begin]
-        #Stworzenie kopii zestawu krawedzi
-        edges_copy = self.edges
         #Dopoki kolejka nie pusta
         while not q.empty():
           #Pobierz pierwszy element
           current = q.get()
-          for el in edges_copy:
-            #Szukanie krawedzi wychodzacych z danego punktu
-            if el[1] == current and not visited[el[2]]:
+          for el in self.edges[current]:
+            #Sprawdzenie krawedzi wychodzacych z danego punktu
+            if not visited[el[0]]:
                 #Dodanie do kolejki i aktualizacja tablic
-                q.put(el[2])
-                visited[el[2]] = True
-                come_from[el[2]] = [come_from[current][0] + 1, current, el[0]]
+                q.put(el[0])
+                visited[el[0]] = True
+                come_from[el[0]] = [come_from[current][0] + 1, current, el[1]]
                 #Jesli napotkany koniec to zwracamy come_from
-                if el[2] == end:
+                if el[0] == end:
                     return come_from
-            #Analogicznie do poprzedniego przypadku
-            elif el[2] == current and not visited[el[1]]:
-                q.put(el[1])
-                visited[el[1]] = True
-                come_from[el[1]] = [come_from[current][0] + 1, current, el[0]]
-                if el[1] == end:
-                    return come_from
-            #Usuniecie ze zbioru rozpatrzonej krawedzi
-            if el[1] == current or el[2] == current:
-                edges_copy.remove(el)
         return False
-
-
-
