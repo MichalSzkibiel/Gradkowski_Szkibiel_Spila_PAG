@@ -1,11 +1,11 @@
 from Graph import *
 import arcpy
-def wizualizacja (drogi, tablica,result):
+def wizualizacja (drogi, tablica, result, id):
     tab_layer="tab_layer"#definicja pomocniczej wartstwy
     strtablica=str(tablica)#konwersja do stringa
     strtablica = "(" + strtablica[1:len(strtablica)-1]+")"
     arcpy.MakeFeatureLayer_management(drogi,tab_layer)
-    SelectLayerByAttribute_management(tab_layer,"NEW_SELECTION","FID IN " + strtablica)#FID znajduje się w tablicy "drogi" lista wartosci w formie SQL-a
+    arcpy.SelectLayerByAttribute_management(tab_layer,"NEW_SELECTION", id + " IN " + strtablica)#FID znajduje się w tablicy "drogi" lista wartosci w formie SQL-a
     arcpy.CopyFeatures_management(tab_layer,result)
 
 
@@ -34,4 +34,4 @@ end = g.binary_search(points[1], 100)
 #Wyznaczenie trasy
 path = g.make_path(begin, end)
 #Zamiana w Shapefile
-wizualizacja(roads,path,file)
+wizualizacja(roads,path,file, id)
