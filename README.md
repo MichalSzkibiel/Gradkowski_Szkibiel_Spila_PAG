@@ -13,7 +13,7 @@ Implementacja algorytmu A*
        
        4. Implementacja algorytmu BFS z uwzględnieniem tego, że ma służyć do wyznaczania trasy pomiędzy dwoma punktami / Michał Szkibiel - zrobione
        
-       5. Stworzenie funkcji tworzącej shapefile z podanej tablicy identyfikatorów dróg celem uzyskania shapefile'a z trasą / Karol Śpila
+       5. Stworzenie funkcji tworzącej shapefile z podanej tablicy identyfikatorów dróg celem uzyskania shapefile'a z trasą / Karol Śpila - wykonane
        
        6. Zamiana składowej edges na listę połączeń dla danego wierzchołka celem optymalizacji działania / Karol Śpila
        
