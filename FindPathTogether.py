@@ -22,7 +22,7 @@ class Graph:
     def __init__(self):
 	    #Konstruktor domyslny
         self.pointCoords = []
-        self.edges = []
+        self.edges = [[[]]]
     def insert_point(self, point):
 	    #Funkcja wstawiajaca nowy punkt do tablicy
 		#Punkty sa posegregowane wedlug sumy wspolrzednych X i Y
@@ -103,7 +103,15 @@ class Graph:
             self = self.insert_point(end)
             n += 1
 	    #Wstawienie do tabeli polaczen
-        self.edges.append([id, begIdx, endIdx, length, avg_Speed, direction])
+	if begin >=len(self.edges):
+            self.edges.append([[end,id,length, avg_Speed, direction]])
+        else:
+            self.edges[begin].append([end,id,length, avg_Speed, direction])
+        if end >=len(self.edges):
+            self.edges.append([[begin,id,length, avg_Speed, direction]])
+        else:
+            self.edges[end].append([begin,id,length, avg_Speed, direction])
+        #self.edges.append([id, begIdx, endIdx, length, avg_Speed, direction])
         return self
 		
     def export(self, file):
@@ -115,7 +123,7 @@ class Graph:
     def __init__(self, lines, id, avg_Speed, direction):
 	    #Konstruktor grafu, ktorego parametrem jest warstwa "OT_SKDR_L" z BDOTu ze wzbogaconymi atrybutami w formie FeatureClassy
         self.pointCoords = []
-        self.edges = []
+        self.edges = [[[]]]
         count = float(arcpy.GetCount_management(lines).getOutput(0))
         i = 0.0
 		#Wybor argumentow istotnych dla problemu
@@ -211,6 +219,7 @@ def wizualizacja (drogi,tablica,result):#Z warstwy drog tworzy featurelayera
         arcpy.MakeFeatureLayer_management(drogi,tab_layer)
         arcpy.SelectLayerByAttribute_management(tab_layer,"NEW_SELECTION","FID IN " + strtablica)#FID znajduje się w tablicy "drogi" lista wartosci w formie SQL-a
         arcpy.CopyFeatures_management(tab_layer,result)#Tworzy oddzielnego layera tylko dla okreslonej drogi
+
 #FeatureClass z drogami
 roads = arcpy.GetParameterAsText(0)
 #Kolumna atrybutow z identyfikatorem
