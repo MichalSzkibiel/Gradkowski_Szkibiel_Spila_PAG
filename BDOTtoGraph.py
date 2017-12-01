@@ -1,4 +1,4 @@
-import Graph
+from Graph import Graph
 import arcpy
 
 #FeatureClass z drogami			
