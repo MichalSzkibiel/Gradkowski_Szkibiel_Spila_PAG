@@ -21,9 +21,6 @@ direction = arcpy.GetParameterAsText(3)
 targets = arcpy.GetParameterAsText(4)
 #Plik z wyjsciem
 file = arcpy.GetParameterAsText(5)  
-#Wywolanie we skrypcie find_path    
-#Zamiana w Shapefile
-result=wizualizacja(roads,tab_layer,file)
 #Utworzenie grafu
 g = Graph(roads, id, avg_Speed, direction)
 #Wyciagniecie punktow z klasy targets
