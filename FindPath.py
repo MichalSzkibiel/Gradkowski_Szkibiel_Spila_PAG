@@ -29,8 +29,8 @@ with arcpy.da.SearchCursor(targets, ["SHAPE@X", "SHAPE@Y"]) as sc:
     for row in sc:
         points.append([row[0], row[1]])
 #Znalezienie punktow
-begin = g.binary_search(points[0], 100)
-end = g.binary_search(points[1], 100)
+begin = g.search(points[0])
+end = g.search(points[1])
 #Wyznaczenie trasy
 path = g.make_path(begin, end)
 #Zamiana w Shapefile
