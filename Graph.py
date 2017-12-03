@@ -19,10 +19,13 @@ class Graph:
 	#Skladowe:
 	#    pointCoords - tabela przechowujaca dane o skrzyzowaniach: id, wspolrzedna X, wspolrzedna Y
 	#    edges - tabela przechowujaca dane o polaczeniach: id, poczatek, koniec
+	#    pointCoords - slownik, klucz: wspolrzedne, wartosc: id
+	#    edges - lista sasiedztwa. Rekord: end, id, avg_speed, direction
 
     def __init__(self):
 	    #Konstruktor domyslny
         self.pointCoords = []
+        self.pointCoords = {}
         self.edges = [[[]]]
     def insert_point(self, point):
 	    #Funkcja wstawiajaca nowy punkt do tablicy
@@ -56,6 +59,27 @@ class Graph:
                     return self
                 else:
                     first = midpoint + 1
+	    #Funkcja wstawiajaca nowy punkt do slownika
+		#Klucz jest przyblizeniem do jednostek
+        X = int(round(point[0]))
+        Y = int(round(point[1]))
+        self.pointCoords[str(X) + " " + str(Y)] = len(self.pointCoords)
+        return self
+
+    def search(self, point):
+        #Funkcja szukajaca punktu w slowniku.
+        #Sprawdza wszystkie skrajne punkty oczka metrowego
+        #Jesli nie znajdzie, zwraca rozmiar slownika
+        X = int(point[0])
+        Y = int(point[1])
+        keys = [str(X) + " " + str(Y),
+                str(X) + " " + str(Y + 1),
+                str(X + 1) + " " + str(Y),
+                str(X + 1) + " " + str(Y + 1)]
+        for key in keys:
+            if self.pointCoords.has_key(key):
+                return self.pointCoords[key]
+        return len(self.pointCoords)
 
     def binary_search(self, point, near = 3):
 	    #Funkcja sluzy do sprawdzenia, czy dany punkt nie zostal juz wprowadzony do tej tabeli.
@@ -94,25 +118,33 @@ class Graph:
         n = len(self.pointCoords)
 		#Sprawdzenie, czy poczatek zostal juz wprowadzony
         begIdx = self.binary_search(begin)
+        begIdx = self.search(begin)
 		#Jesli nie, to powinien byc wstawiony do tabeli punktow
         if (begIdx == n):
             self = self.insert_point(begin)
             n += 1
 	    #Analogicznie dla konca
         endIdx = self.binary_search(end)
+        endIdx = self.search(end)
         if (endIdx == n):
             self = self.insert_point(end)
             n += 1
 	    #Wstawienie do tabeli polaczen
 	if begin >=len(self.edges):
             self.edges.append([[end,id,length, avg_Speed, direction]])
+        if begIdx >=len(self.edges):
+            self.edges.append([[endIdx,id,length, avg_Speed, direction]])
         else:
             self.edges[begin].append([end,id,length, avg_Speed, direction])
         if end >=len(self.edges):
             self.edges.append([[begin,id,length, avg_Speed, direction]])
+            self.edges[begIdx].append([endIdx,id,length, avg_Speed, direction])
+        if endIdx >=len(self.edges):
+            self.edges.append([[begIdx,id,length, avg_Speed, direction]])
         else:
             self.edges[end].append([begin,id,length, avg_Speed, direction])
         #self.edges.append([id, begIdx, endIdx, length, avg_Speed, direction])
+            self.edges[endIdx].append([begIdx,id,length, avg_Speed, direction])
         return self
 		
     def export(self, file):
@@ -124,6 +156,7 @@ class Graph:
     def __init__(self, lines, id, avg_Speed, direction):
 	    #Konstruktor grafu, ktorego parametrem jest warstwa "OT_SKDR_L" z BDOTu ze wzbogaconymi atrybutami w formie FeatureClassy
         self.pointCoords = []
+        self.pointCoords = {}
         self.edges = [[[]]]
         count = float(arcpy.GetCount_management(lines).getOutput(0))
         i = 0.0
@@ -196,6 +229,8 @@ class Graph:
           for el in self.edges[current]:
             #Sprawdzenie krawedzi wychodzacych z danego punktu
             if not visited[el[0]]:
+            #Przeszukiwanie krawedzi wychodzacych z danego punktu
+            if len(el) > 0 and not visited[el[0]]:
                 #Dodanie do kolejki i aktualizacja tablic
                 q.put(el[0])
                 visited[el[0]] = True
