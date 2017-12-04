@@ -102,7 +102,15 @@ class Graph:
             self = self.insert_point(end)
             n += 1
 	    #Wstawienie do tabeli polaczen
-        self.edges.append([id, begIdx, endIdx, length, avg_Speed, direction])
+       if begIdx >=len(self.edges):
+            self.edges.append([[endIdx,id,length, avg_Speed, direction%2]])
+        else:
+            self.edges[begIdx].append([endIdx,id,length, avg_Speed, direction%2])
+        if endIdx >=len(self.edges):
+            self.edges.append([[begIdx,id,length, avg_Speed, direction//2]])
+        else:
+            self.edges[endIdx].append([begIdx,id,length, avg_Speed, direction//2])
+        #self.edges.append([id, begIdx, endIdx, length, avg_Speed, direction])
         return self
 		
     def export(self, file):
