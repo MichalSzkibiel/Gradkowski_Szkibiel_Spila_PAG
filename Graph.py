@@ -1,5 +1,6 @@
 import arcpy
 import math
+from Queue import *
 
 def isClose(first, second, maxDiff):
     #Funkcja sprawdzajaca czy dwa elementy (first, second) roznia sie najwyzej o maxDiff
