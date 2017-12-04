@@ -16,77 +16,35 @@ def isClose2(first, second, maxDiff):
 class Graph:
     #Klasa przechowujaca siec drog w formie grafu
 	#Skladowe:
-	#    pointCoords - tabela przechowujaca dane o skrzyzowaniach: id, wspolrzedna X, wspolrzedna Y
-	#    edges - tabela przechowujaca dane o polaczeniach: id, poczatek, koniec
+	#    pointCoords - slownik, klucz: wspolrzedne, wartosc: id
+	#    edges - lista sasiedztwa. Rekord: end, id, avg_speed, direction
 
     def __init__(self):
 	    #Konstruktor domyslny
-        self.pointCoords = []
+        self.pointCoords = {}
         self.edges = [[[]]]
     def insert_point(self, point):
-	    #Funkcja wstawiajaca nowy punkt do tablicy
-		#Punkty sa posegregowane wedlug sumy wspolrzednych X i Y
-        X = point[0]
-        Y = point[1]
-        dist = X + Y;
-        n = len(self.pointCoords)
-        if n == 0:
-		    #Jesli jest to pierwszy punkt, to po prostu go wstawiamy do tabeli
-            self.pointCoords = [[0, X, Y]]
-            return self
-		#Szukanie wlasciwej pozycji do wstawienia poprzez wyszukiwanie binarne
-        first = 0
-        last = n - 1
-        while first <= last:
-            midpoint = (first + last)//2
-            dist2 = self.pointCoords[midpoint][1] + self.pointCoords[midpoint][2]
-            if (dist < dist2):
-                if (midpoint == 0):
-                    self.pointCoords = [[n, X, Y]] + self.pointCoords
-                    return self
-                last = midpoint - 1
-            elif (dist >= dist2):
-                if (midpoint == n-1):
-                    self.pointCoords.append([n, X, Y])
-                    return self
-                dist3 = self.pointCoords[midpoint + 1][1] + self.pointCoords[midpoint + 1][2]
-                if (dist < dist3):
-                    self.pointCoords = self.pointCoords[:midpoint + 1] + [[n, X, Y]] + self.pointCoords[midpoint + 1:]
-                    return self
-                else:
-                    first = midpoint + 1
+	    #Funkcja wstawiajaca nowy punkt do slownika
+		#Klucz jest przyblizeniem do jednostek
+        X = int(round(point[0]))
+        Y = int(round(point[1]))
+        self.pointCoords[str(X) + " " + str(Y)] = len(self.pointCoords)
+        return self
 
-    def binary_search(self, point, near = 3):
-	    #Funkcja sluzy do sprawdzenia, czy dany punkt nie zostal juz wprowadzony do tej tabeli.
-		#Punkty sa szukane poprzez zmodyfikowane wyszukiwanie binarne. Zgodnie ze struktura tabeli najpierw
-		#szukane sa punkty o bliskiej sumie wspolrzednych, a potem blisko polozone, juz wyszukiwaniem liniowym.
-		#Jesli punkt zostaje znaleziony, to zostaje zwrocony jego id. Jesli nie, to zostaje zwrocony rozmiar tabeli punktow
-        dist = point[0] + point[1]
-        n = len(self.pointCoords)
-        first = 0
-        last = n-1
-        found = False
-        while first<=last and not found:
-            midpoint = (first + last)//2
-            dist2 = self.pointCoords[midpoint][1] + self.pointCoords[midpoint][2]
-            if midpoint < n and isClose(dist, dist2, near) :
-                i = midpoint
-                while i >= 0 and isClose(dist, self.pointCoords[i][1] + self.pointCoords[i][2], near):
-                    if isClose2(point, self.pointCoords[i][1:], near):
-                        return self.pointCoords[i][0]
-                    i -= 1
-                i = midpoint + 1
-                while i < n and isClose(dist, self.pointCoords[i][1] + self.pointCoords[i][2], near):
-                    if isClose2(point, self.pointCoords[i][1:], near):
-                        return self.pointCoords[i][0]
-                    i += 1
-                found = True
-            else:
-                if dist < dist2:
-                    last = midpoint-1
-                else:
-                    first = midpoint+1
-        return n
+    def search(self, point):
+        #Funkcja szukajaca punktu w slowniku.
+        #Sprawdza wszystkie skrajne punkty oczka metrowego
+        #Jesli nie znajdzie, zwraca rozmiar slownika
+        X = int(point[0])
+        Y = int(point[1])
+        keys = [str(X) + " " + str(Y),
+                str(X) + " " + str(Y + 1),
+                str(X + 1) + " " + str(Y),
+                str(X + 1) + " " + str(Y + 1)]
+        for key in keys:
+            if self.pointCoords.has_key(key):
+                return self.pointCoords[key]
+        return len(self.pointCoords)
 
     def insert_edge(self, id, begin, end, length, avg_Speed, direction):
 	    #Funkcja sluzaca do wstawiania nowych polaczen
@@ -122,7 +80,7 @@ class Graph:
         stream.close()
     def __init__(self, lines, id, avg_Speed, direction):
 	    #Konstruktor grafu, ktorego parametrem jest warstwa "OT_SKDR_L" z BDOTu ze wzbogaconymi atrybutami w formie FeatureClassy
-        self.pointCoords = []
+        self.pointCoords = {}
         self.edges = [[[]]]
         count = float(arcpy.GetCount_management(lines).getOutput(0))
         i = 0.0
@@ -150,12 +108,18 @@ class Graph:
                 if i % 1000 == 0:
                     arcpy.AddMessage("Wpisano " + str(i/count*100) + "% drog")
 
-    def make_path(self, begin, end):
+     def make_path(self, begin, end, mode):
         # Interfejs do znajdowania sciezki za pomoca algorytmu BFS
         #    begin - punkt poczatkowy sciezki
         #    end - punkt koncowy sciezki
-        # Przeprowadzenie algorytmu BFS
-        come_from = self.BFS(begin, end)
+        #    mode - parametry wyznaczania
+        come_from = []
+        if mode == "BFS":
+            # Przeprowadzenie algorytmu BFS
+            come_from = self.BFS(begin, end)
+        elif mode == "A*":
+            # Przeprowadzenie algorytmu A*
+            come_from = self.aDot(begin, end)
         # Wynikiem jest tablica trojek odleglosc, pochodzenie, krawedz
         # Jesli nie istnieje, to nie istnieje tez sciezka
         if not come_from:
@@ -185,30 +149,71 @@ class Graph:
         visited[begin] = True
         #Ustawienie pochodzenia punktu poczatkowego na samego siebie
         come_from[begin] = [0, begin]
-        #Stworzenie kopii zestawu krawedzi
-        edges_copy = self.edges
         #Dopoki kolejka nie pusta
         while not q.empty():
           #Pobierz pierwszy element
           current = q.get()
-          for el in edges_copy:
-            #Szukanie krawedzi wychodzacych z danego punktu
-            if el[1] == current and not visited[el[2]]:
+          for el in self.edges[current]:
+            #Przeszukiwanie krawedzi wychodzacych z danego punktu
+            if not visited[el[0]]:
                 #Dodanie do kolejki i aktualizacja tablic
-                q.put(el[2])
-                visited[el[2]] = True
-                come_from[el[2]] = [come_from[current][0] + 1, current, el[0]]
+                q.put(el[0])
+                visited[el[0]] = True
+                come_from[el[0]] = [come_from[current][0] + 1, current, el[1]]
                 #Jesli napotkany koniec to zwracamy come_from
-                if el[2] == end:
+                if el[0] == end:
                     return come_from
-            #Analogicznie do poprzedniego przypadku
-            elif el[2] == current and not visited[el[1]]:
-                q.put(el[1])
-                visited[el[1]] = True
-                come_from[el[1]] = [come_from[current][0] + 1, current, el[0]]
-                if el[1] == end:
-                    return come_from
-            #Usuniecie ze zbioru rozpatrzonej krawedzi
-            if el[1] == current or el[2] == current:
-                edges_copy.remove(el)
+        return False
+
+    def h(self, end):
+        #Docelowo funkcja obliczajaca heurystyke dla kazdego wierzcholka.
+        #Teraz dla kazdego wierzcholka daje 0
+        H = []
+        for el in self.pointCoords:
+            H.append(0)
+        return H
+
+    def aDot(self, begin, end):
+        #Implementacja A*
+        #visited - tablica odwiedzonych wierzcholkow
+        #come_from - tablica trojek odleglosc, pochodzenie wierzcholka, pochodzenie krawedzi
+        #Inicjalizacja
+        visited = []
+        come_from = [[]]
+        for el in self.pointCoords:
+            visited.append(False)
+            if len(come_from[0]) == 0:
+                come_from[0] = [999999999, None, None]
+                continue
+            come_from.append([999999999, None, None])
+        #Pobranie heurystyki
+        H = self.h(end)
+        #Inicjalizacja kolejki priorytetowej
+        q = PriorityQueue()
+        #Uwzglednienie pierwszego punktu
+        q.put([H[begin], begin])
+        come_from[begin] = [0, begin]
+        #Dopoki kolejka nie opustoszala
+        while not q.empty():
+          #Pobierz pierwszy element
+          current = q.get()[1]
+          #Sprawdz, czy tu nie bylismy
+          if visited[current]:
+              continue
+          #Odwiedzilismy wierzcholek
+          visited[current] = True
+          #Jak trafilismy na koniec, to zwracamy come_from
+          if current == end:
+              return come_from
+          for el in self.edges[current]:
+            #Przeszukiwanie krawedzi wychodzacych z danego punktu
+            if len(el) == 0:
+                continue
+            arcpy.AddMessage(str(el))
+            dist = come_from[current][0] + el[2]
+            #Jesli sasiad nie odwiedzony i nowa odleglosc bedzie mniejsza
+            if not visited[el[0]] and come_from[el[0]][0] > dist :
+                #Dodanie do kolejki i aktualizacja tablic
+                q.put([dist + H[el[0], el[0]]])
+                come_from[el[0]] = [dist, current, el[1]]
         return False
