@@ -50,13 +50,13 @@ class Graph:
 	    #Funkcja sluzaca do wstawiania nowych polaczen
         n = len(self.pointCoords)
 		#Sprawdzenie, czy poczatek zostal juz wprowadzony
-        begIdx = self.binary_search(begin)
+        begIdx = self.search(begin)
 		#Jesli nie, to powinien byc wstawiony do tabeli punktow
         if (begIdx == n):
             self = self.insert_point(begin)
             n += 1
 	    #Analogicznie dla konca
-        endIdx = self.binary_search(end)
+        endIdx = self.search(end)
         if (endIdx == n):
             self = self.insert_point(end)
             n += 1
@@ -108,18 +108,18 @@ class Graph:
                 if i % 1000 == 0:
                     arcpy.AddMessage("Wpisano " + str(i/count*100) + "% drog")
 
-     def make_path(self, begin, end, mode):
+    def make_path(self, begin, end, mode = ["A*", "samochod", "najszybsza"]):
         # Interfejs do znajdowania sciezki za pomoca algorytmu BFS
         #    begin - punkt poczatkowy sciezki
         #    end - punkt koncowy sciezki
-        #    mode - parametry wyznaczania
+        #    mode - parametry wyznaczania, pozycja 0: algorytm, 1: pieszy, czy samochod, 2: czas, czy odleglosc
         come_from = []
-        if mode == "BFS":
+        if mode[0] == "BFS":
             # Przeprowadzenie algorytmu BFS
-            come_from = self.BFS(begin, end)
-        elif mode == "A*":
+            come_from = self.BFS(begin, end, mode)
+        elif mode[0] == "A*":
             # Przeprowadzenie algorytmu A*
-            come_from = self.aDot(begin, end)
+            come_from = self.aDot(begin, end, mode)
         # Wynikiem jest tablica trojek odleglosc, pochodzenie, krawedz
         # Jesli nie istnieje, to nie istnieje tez sciezka
         if not come_from:
@@ -133,10 +133,14 @@ class Graph:
             path.append(come_from[current][2])
         return path
 
-    def BFS (self, begin, end):
+    def BFS (self, begin, end, mode):
         # Implementacja BFS
         # begin - punkt poczatkowy
         # end - punkt koncowy
+        #Sprawdzenie stosunku do kierunkowosci
+        ignore_direct = False
+        if mode[1] == "pieszy":
+            ignore_direct = True
         #Tablica odwiedzin i trojek odleglosc, pochodzenie i krawedz, inicjalizacja
         visited = []
         come_from = [[]]
@@ -155,7 +159,7 @@ class Graph:
           current = q.get()
           for el in self.edges[current]:
             #Przeszukiwanie krawedzi wychodzacych z danego punktu
-            if not visited[el[0]]:
+            if not visited[el[0]] and (ignore_direct or el[4] == 0):
                 #Dodanie do kolejki i aktualizacja tablic
                 q.put(el[0])
                 visited[el[0]] = True
@@ -165,7 +169,7 @@ class Graph:
                     return come_from
         return False
 
-    def h(self, end):
+    def h(self, end, mode):
         #Docelowo funkcja obliczajaca heurystyke dla kazdego wierzcholka.
         #Teraz dla kazdego wierzcholka daje 0
         H = []
@@ -173,10 +177,18 @@ class Graph:
             H.append(0)
         return H
 
-    def aDot(self, begin, end):
+    def aDot(self, begin, end, mode):
         #Implementacja A*
         #visited - tablica odwiedzonych wierzcholkow
         #come_from - tablica trojek odleglosc, pochodzenie wierzcholka, pochodzenie krawedzi
+        #Sprawdzenie stosunku do kierunkowosci
+        ignore_direct = False
+        if mode[1] == "pieszy":
+            ignore_direct = True
+        #Sprawdzenie, czy liczy sie czas, czy odleglosc
+        time = 1
+        if mode[2] == "najkrotsza":
+            time = 0
         #Inicjalizacja
         visited = []
         come_from = [[]]
@@ -187,7 +199,7 @@ class Graph:
                 continue
             come_from.append([999999999, None, None])
         #Pobranie heurystyki
-        H = self.h(end)
+        H = self.h(end, mode)
         #Inicjalizacja kolejki priorytetowej
         q = PriorityQueue()
         #Uwzglednienie pierwszego punktu
@@ -209,11 +221,10 @@ class Graph:
             #Przeszukiwanie krawedzi wychodzacych z danego punktu
             if len(el) == 0:
                 continue
-            arcpy.AddMessage(str(el))
-            dist = come_from[current][0] + el[2]
-            #Jesli sasiad nie odwiedzony i nowa odleglosc bedzie mniejsza
-            if not visited[el[0]] and come_from[el[0]][0] > dist :
+            dist = come_from[current][0] + el[2]/ (el[3]*time)
+            #Jesli sasiad nie odwiedzony i nowa odleglosc bedzie mniejsza i nie przeczy kierunkowi
+            if not visited[el[0]] and come_from[el[0]][0] > dist and (ignore_direct or el[4] == 0) :
                 #Dodanie do kolejki i aktualizacja tablic
-                q.put([dist + H[el[0], el[0]]])
+                q.put([dist + H[el[0]], el[0]])
                 come_from[el[0]] = [dist, current, el[1]]
         return False
