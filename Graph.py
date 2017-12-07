@@ -61,17 +61,17 @@ class Graph:
             self = self.insert_point(end)
             n += 1
 	    #Wstawienie do tabeli polaczen
-	if begIdx >=len(self.edges):
-            self.edges.append([[endIdx,id,length, avg_Speed, direction%2]])
+        if begIdx >=len(self.edges):
+            self.edges.append([[endIdx,id,length, avg_Speed, direction//2]])
         else:
-            self.edges[begIdx].append([endIdx,id,length, avg_Speed, direction%2])
+            self.edges[begIdx].append([endIdx,id,length, avg_Speed, direction//2])
         if endIdx >=len(self.edges):
-            self.edges.append([[begIdx,id,length, avg_Speed, direction//2]])
+            self.edges.append([[begIdx,id,length, avg_Speed, direction%2]])
         else:
-            self.edges[endIdx].append([begIdx,id,length, avg_Speed, direction//2])
+            self.edges[endIdx].append([begIdx,id,length, avg_Speed, direction%2])
         #self.edges.append([id, begIdx, endIdx, length, avg_Speed, direction])
         return self
-		
+
     def export(self, file):
 	    #Funkcja zapisujaca graf do wskazanego pliku tekstowego file
         stream = open(file, "w")
@@ -94,7 +94,7 @@ class Graph:
                 length = line[2]
                 avg_Speed = line[3]
                 direction = line[4]
-				
+
 				#Inicjalizacja
                 begin = [0,0]
                 end = [1,1]	
@@ -102,7 +102,7 @@ class Graph:
                 for part in geom:
                     begin = [part[0].X, part[0].Y]
                     end = [part[len(part) - 1].X, part[len(part) - 1].Y]
-					
+
 				#Wstawienie nowego polaczenia
                 self = self.insert_edge(id, begin, end, length, avg_Speed, direction)
                 if i % 1000 == 0:
@@ -186,9 +186,9 @@ class Graph:
         if mode[1] == "pieszy":
             ignore_direct = True
         #Sprawdzenie, czy liczy sie czas, czy odleglosc
-        time = 1
+        time = True
         if mode[2] == "najkrotsza":
-            time = 0
+            time = False
         #Inicjalizacja
         visited = []
         come_from = [[]]
@@ -221,7 +221,7 @@ class Graph:
             #Przeszukiwanie krawedzi wychodzacych z danego punktu
             if len(el) == 0:
                 continue
-            dist = come_from[current][0] + el[2]/ (el[3]*time)
+            dist = come_from[current][0] + el[2]/ (1 - (1 - el[3])*time)
             #Jesli sasiad nie odwiedzony i nowa odleglosc bedzie mniejsza i nie przeczy kierunkowi
             if not visited[el[0]] and come_from[el[0]][0] > dist and (ignore_direct or el[4] == 0) :
                 #Dodanie do kolejki i aktualizacja tablic

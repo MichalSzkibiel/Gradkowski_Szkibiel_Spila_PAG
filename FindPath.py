@@ -19,8 +19,12 @@ avg_Speed = arcpy.GetParameterAsText(2)
 direction = arcpy.GetParameterAsText(3)
 #Punkty z poczatkiem i koncem
 targets = arcpy.GetParameterAsText(4)
+#Pobranie trybu
+algorithm = arcpy.GetParameterAsText(5)
+ignore_direct = arcpy.GetParameterAsText(6)
+time_or_dist = arcpy.GetParameterAsText(7)
 #Plik z wyjsciem
-file = arcpy.GetParameterAsText(5)  
+file = arcpy.GetParameterAsText(8)  
 #Utworzenie grafu
 g = Graph(roads, id, avg_Speed, direction)
 #Wyciagniecie punktow z klasy targets
@@ -33,6 +37,6 @@ begin = g.search(points[0])
 end = g.search(points[1])
 arcpy.AddMessage(str(begin) + " " + str(end))
 #Wyznaczenie trasy
-path = g.make_path(begin, end)
+path = g.make_path(begin, end, [algorithm, ignore_direct, time_or_dist])
 #Zamiana w Shapefile
 wizualizacja(roads,path,file, id)
