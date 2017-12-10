@@ -29,7 +29,7 @@ Implementacja algorytmu A*
       
           Do poprawnego działania potrzebne jest ustalenie ścieżki do położenia pliku
       
-      Jezdnie_WokolTorunia.zip- skompresowany Plik z Shapefile z gotowymi atrybutami o średniej prędkości w zależności od klasy dróg i materiału jej nawierzchni w przedostatniej kolumnie o nazwie sred_pred, oraz o kierunkowości zawartej w wartosciach 0-3, gdzie: 0- dwukierunkowość; 1- jednokierunkowość zgodna z orientacją; 2-jednokierunkowość przeciwna do orientacji; 3-ulice wyłączone z ruchu w ostatniej kolumnie "kierunk".
+      Jezdnie_WokolTorunia2.zip- skompresowany Plik z Shapefile z gotowymi atrybutami o średniej prędkości w zależności od klasy dróg i materiału jej nawierzchni w przedostatniej kolumnie o nazwie sred_pred, oraz o kierunkowości zawartej w wartosciach 0-3, gdzie: 0- dwukierunkowość; 1- jednokierunkowość zgodna z orientacją; 2-jednokierunkowość przeciwna do orientacji; 3-ulice wyłączone z ruchu w ostatniej kolumnie "kierunk".
        
       wizualizacja.py- plik zawierający funkcję umożliwiającą wyświetlenie określonej trasy w ArcMapie. Funkcja została dodana także do skryptu FindPath.py
       
