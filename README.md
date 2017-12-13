@@ -17,6 +17,8 @@ Implementacja algorytmu A*
        
        6. Zamiana składowej edges na listę połączeń dla danego wierzchołka celem optymalizacji działania / Karol Śpila- zrobione
        
+       7. Rozszerzenie - Trasa do granicy centrum / Michał Szkibiel
+       
   Pliki:
   
       BDOTtoGraph.py - plik konwertujacy Feature Classę z drogami na graf, a następnie zapisujący strukturę grafu do pliku tekstowego
