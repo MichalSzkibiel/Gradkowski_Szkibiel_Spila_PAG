@@ -17,7 +17,7 @@ Implementacja algorytmu A*
        
        6. Zamiana składowej edges na listę połączeń dla danego wierzchołka celem optymalizacji działania / Karol Śpila- zrobione
        
-       7. Rozszerzenie - Trasa do granicy centrum / Michał Szkibiel
+       7. Rozszerzenie - Trasa do granicy centrum / Michał Szkibiel - zrobione
        
   Pliki:
   
