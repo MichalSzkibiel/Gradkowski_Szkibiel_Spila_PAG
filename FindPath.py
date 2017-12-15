@@ -36,8 +36,8 @@ while i > 0:
    if dat[i] == "\\" or dat[i] == "/":
        break
 arcpy.CreateFeatureDataset_management(dat[:i], dat[i+1:])
-file_path = dat + "\\path"
-file_target = dat + "\\target"
+file_path = "path"
+file_target = "target"
 #Utworzenie grafu
 g = Graph(roads, id, avg_Speed, direction)
 #Wyciagniecie punktow z klasy targets
@@ -51,6 +51,9 @@ end = g.search(points[1])
 arcpy.AddMessage(str(begin) + " " + str(end))
 #Wyznaczenie trasy
 path = g.make_path(begin, end, [algorithm, ignore_direct, time_or_dist])
+#Przypisanie workspace do celowego datasetu
+prev_work = arcpy.env.workspace
+arcpy.env.workspace = dat
 #Zamiana w Shapefile
 wizualizacja(roads,path,file_path, id)
 #Jezeli inna niz punkt koncowy, to zamien na linie
@@ -63,3 +66,5 @@ arcpy.Intersect_analysis([file_path, target], file_target, "ONLY_FID", None, "PO
 
 if target == "toLine":
    arcpy.Delete_management(target)
+#Zamiana z powrotem
+arcpy.env.workspace = prev_work
