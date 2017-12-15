@@ -36,8 +36,9 @@ while i > 0:
    if dat[i] == "\\" or dat[i] == "/":
        break
 arcpy.CreateFeatureDataset_management(dat[:i], dat[i+1:])
-file_path = "path"
-file_target = "target"
+
+file_path = dat[i+1:] + "_path"
+file_target = dat[i+1:] + "_target"
 #Utworzenie grafu
 g = Graph(roads, id, avg_Speed, direction)
 #Wyciagniecie punktow z klasy targets
