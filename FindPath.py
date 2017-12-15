@@ -36,7 +36,7 @@ while i > 0:
    if dat[i] == "\\" or dat[i] == "/":
        break
 arcpy.CreateFeatureDataset_management(dat[:i], dat[i+1:])
-
+#Zapisuje kazda tworzona warstwe dodajac do nazwy numer, w celu unikniecia zapisania jej pod ta sama nazwa
 file_path = dat[i+1:] + "_path"
 file_target = dat[i+1:] + "_target"
 #Utworzenie grafu
